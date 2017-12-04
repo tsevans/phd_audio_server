@@ -19,3 +19,5 @@ typedef struct HTTP_request
 bool end_of_buffer(char* buf, int buflen);
 bool parse_header(char* buf, int buflen, struct HTTP_request* request);
 void parse_uri_callback(struct HTTP_request* request);
+
+#endif
