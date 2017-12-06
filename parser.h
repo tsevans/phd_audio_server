@@ -11,7 +11,7 @@ typedef struct HTTP_request
 {
     char* method;
     char* uri;
-    char* verb;
+    char* version;
     char* callback;
     bool keep_alive;
 }HTTP_request;

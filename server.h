@@ -34,6 +34,7 @@ typedef struct HTTP_socket
     int read_buf_size;         //Size of read buffer
     char* read_buf;            //Read buffer
     bool keep_alive;           //Keep alive flag
+    bool is_mmaped;            //Memory mapped flag
     struct buffer write_buf;   //Write buffer
     struct buffer data;        //Data buffer
     struct epoll_event event;  //Epoll event

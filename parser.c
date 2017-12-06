@@ -56,7 +56,7 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
         str_len = BUFLEN;
 
     strncpy(tmp, str, str_len);
-    sscanf(tmp, "%s %s %s\n", request->method, request->uri, request->verb);
+    sscanf(tmp, "%s %s %s\n", request->method, request->uri, request->version);
     parse_uri_callback(request);
     return true;
 }
