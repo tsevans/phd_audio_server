@@ -10,9 +10,9 @@ int main(int argc, char** argv)
 {
     struct sockaddr_in clientaddr;
     int listen_socket;
-    if (listen_socket = open_listenfd(socket_port))
+    if ((listen_socket = open_listenfd(socket_port)) < 0)
     {
-        fprintf(stderr, "Error opening listen file descriptor!: %s\n", strerror(errno););
+        fprintf(stderr, "Error opening listen file descriptor!: %s\n", strerror(errno));
         exit(0);
     }
 
@@ -26,13 +26,24 @@ int main(int argc, char** argv)
 
     while (true)
     {
-        int connection;
-        if (connecti)
-        {
-            fprintf(stderr, "!: %s\n", stderror(errno));
-            exit(0);
-        }
+        int connection = accept_connection(listen_socket, (struct sockaddr*) &clientaddr, &clientlen);
+
+        //Make socket non-blocking
+        int flags = fcntl(connection, F_GETFL, 0);
+        fcntl(connection, F_SETFL, flags | O_NONBLOCK);
+
+        struct HTTP_socket* new_sock = calloc(1, sizeof(struct HTTP_socket));
+        new_sock->fd = connection;
+        new_sock->last_access = time(NULL);
+        new_sock->event.events = EPOLLIN | EPOLLRDHUP | EPOLLONESHOT;
+        new_sock->event.data.ptr = new_sock;
+
+        //Add connection to epoll set
+        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connection, &new_sock->event);
     }
+
+    terminate_threadpool(pool);
+    return 0;
 }
 
 /*
@@ -54,9 +65,9 @@ void* poll_connections(void* data)
             if (ready_events[x].events & EPOLLRDHUP || ready_events[x].events & EPOLLERR || ready_events[x].events & EPOLLHUP)
                 close_socket((struct HTTP_socket*)ready_events[x].data.ptr);
             else if (ready_events[x].events & EPOLLIN)
-                threadpool_submit(); //TODO: memory leak from allocated future
+                threadpool_submit(pool, (fork_join_task)read_from_socket, (void*)ready_events[x].data.ptr);
             else if (ready_events[x].events & EPOLLOUT)
-                threadpool_submit();
+                threadpool_submit(pool, (fork_join_task)write_to_socket, (void*)ready_events[x].data.ptr);
         }
     }
 }
@@ -147,13 +158,13 @@ int close_socket(struct HTTP_socket* sock)
     if (sock->data.data != NULL)
     {
         if (sock->is_mmaped)
-        (
+        {
             if (munmap(sock->data.data, sock->data.size) < 0)
             {
                 fprintf(stderr, "Error munmapping file!: %s\n", strerror(errno));
                 exit(0);
             }
-        )
+        }
         else
             free(sock->data.data);
     }

@@ -20,7 +20,7 @@
 #include "parser.h"
 #include "threadpool.h"
 
-typedef struct write_buffer
+typedef struct buffer
 {
     char* data;  //Data in buffer
     int size;    //Size of buffer

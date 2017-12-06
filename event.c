@@ -195,7 +195,7 @@ void serve_text(struct HTTP_socket* sock, int err)
     write_buffer(&sock->write_buf, "Server: PHD Audio Server\r\n");
     write_buffer(&sock->write_buf, "Content-length %d\r\n", sock->data.pos);
     write_buffer(&sock->write_buf, "Content-type: text/plain\r\n");
-    write_buffer("\r\n");
+    write_buffer(&sock->write_buf, "\r\n");
     finish_read(sock);
 }
 
@@ -216,7 +216,7 @@ int load_file(struct HTTP_socket* sock, char* fname)
         if (fd == EEXIST || fd == EFAULT || fd == ENAMETOOLONG || fd == ETXTBSY)
             return -1;
 
-        if (fd == EACCESS || fd == EPERM)
+        if (fd == EACCES || fd == EPERM)
             return 2;
 
         perror("Error opening file for mmaping!\n");
