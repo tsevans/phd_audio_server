@@ -2,13 +2,37 @@
 #include "event.h"
 #include "wrappers.h"
 
-static int socket_port = 6969;
+static int socket_port = 6969; //Default port
 static int epoll_fd;
 static struct threadpool* pool;
 
 int main(int argc, char** argv)
 {
-    //Peniz
+    struct sockaddr_in clientaddr;
+    int listen_socket;
+    if (listen_socket = open_listenfd(socket_port))
+    {
+        fprintf(stderr, "Error opening listen file descriptor!: %s\n", strerror(errno););
+        exit(0);
+    }
+
+    pool = new_threadpool(10);  //Create threadpool with 10 threads
+    epoll_fd = epoll_create(1); //Create reading epoll set
+
+    pthread_t poll_thread;
+    create_thread(&poll_thread, NULL, poll_connections, NULL);
+
+    socklen_t clientlen = sizeof(clientaddr);
+
+    while (true)
+    {
+        int connection;
+        if (connecti)
+        {
+            fprintf(stderr, "!: %s\n", stderror(errno));
+            exit(0);
+        }
+    }
 }
 
 /*
@@ -121,7 +145,18 @@ int close_socket(struct HTTP_socket* sock)
         free(sock->write_buf.data);
 
     if (sock->data.data != NULL)
-        free(sock->data.data);
+    {
+        if (sock->is_mmaped)
+        (
+            if (munmap(sock->data.data, sock->data.size) < 0)
+            {
+                fprintf(stderr, "Error munmapping file!: %s\n", strerror(errno));
+                exit(0);
+            }
+        )
+        else
+            free(sock->data.data);
+    }
 
     free(sock);
     return 0;
