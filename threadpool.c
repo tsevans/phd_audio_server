@@ -54,7 +54,7 @@ struct threadpool* new_threadpool(int nthreads)
     for (x = 0; x < nthreads; x++)
     {
         struct thread_data* tdata = malloc(sizeof(struct thread_data));
-        pthread_create(&tdata->thread, NULL, runner_thread_routine, (void *) pool);
+        create_thread(&tdata->thread, NULL, runner_thread_routine, (void *) pool);
         list_push_back(&pool->threads, &tdata->elem);
     }
 
