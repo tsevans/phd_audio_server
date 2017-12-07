@@ -27,8 +27,8 @@ typedef struct thread_data
 
 typedef struct threadpool
 {
-    struct dlist work_queue;
-    struct dlist threads;
+    struct list work_queue;
+    struct list threads;
     bool running;
     pthread_cond_t condition;
     pthread_mutex_t lock;
