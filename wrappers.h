@@ -18,11 +18,9 @@
 #include <netinet/in.h>
 
 //POSIX Threads Interface
-void create_thread(pthread_t* tid, pthread_attr_t* attr, void*(*routine)(void*), void* arg);
+void create_thread(pthread_t* tid, pthread_attr_t* attr, void* (*routine)(void*), void* arg);
 void join_thread(pthread_t tid, void** ret);
 void abort_thread(void* retval);
-void init_thread_attrs(pthread_attr_t* attrs);
-void set_thread_detachstate(pthread_attr_t* attr, int ds);
 
 //Sockets interface
 int create_socket(int domain, int type, int protocol);

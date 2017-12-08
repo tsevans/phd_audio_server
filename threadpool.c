@@ -8,7 +8,7 @@
 #include "dlist.h"
 #include "wrappers.h"
 
-static void runner_thread_routine(void* tpool);
+static void* runner_thread_routine(void* tpool);
 
 typedef struct future
 {
@@ -70,7 +70,7 @@ struct threadpool* new_threadpool(int nthreads)
  */
 static void* runner_thread_routine(void* tpool)
 {
-    struct threadpool* pool = (struct threadpool*) tdpool;
+    struct threadpool* pool = (struct threadpool*) tpool;
     struct future* fut = NULL;
     pthread_mutex_lock(&pool->lock);
 
