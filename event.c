@@ -4,7 +4,7 @@
 #define REALLOC_SIZE 2048
 #define ANON_SIZE 268435456
 
-static char* storage_path = "/mnt/pidrive1/txt/";
+static char* storage_path = "/mnt/pidrive1/";
 
 /*
  * Read from a socket.
