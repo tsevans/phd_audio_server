@@ -14,6 +14,8 @@ static char* storage_path = "/mnt/pidrive1/";
  */
 void* read_from_socket(void* data)
 {
+    printf("Reading from socket...\n");
+
     struct HTTP_socket* sock = (struct HTTP_socket*) data;
     int count = 0;
     char temp[BUFLEN];
@@ -208,6 +210,8 @@ void serve_text(struct HTTP_socket* sock, int err)
  */
 int load_file(struct HTTP_socket* sock, char* fname)
 {
+    printf("Loading file: %s\n", fname);
+
     struct stat stat_block;
     int fd = open(fname, O_RDONLY);
 
