@@ -4,7 +4,7 @@
 #define REALLOC_SIZE 2048
 #define ANON_SIZE 268435456
 
-static char* storage_path = "./";
+static char* storage_path = "/mnt/pidrive1/txt/";
 
 /*
  * Read from a socket.
@@ -118,15 +118,15 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
     }
 }
 
-/*
- * Change to root path for the server.
- *
- * @param path - New path for the server.
- */
-void change_root_path(char* path)
-{
-    storage_path = path;
-}
+// /*
+//  * Change to root path for the server.
+//  *
+//  * @param path - New path for the server.
+//  */
+// void change_root_path(char* path)
+// {
+//     storage_path = path;
+// }
 
 /*
  * Method to serve a request for static content.
