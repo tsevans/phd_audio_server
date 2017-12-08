@@ -106,6 +106,8 @@ void listen_for_connection(int sockfd, int backlog)
  */
 int accept_connection(int sockfd, struct sockaddr* addr, socklen_t* addrlen)
 {
+    printf("Accepting connection.\n");
+
     int retcode;
     if ((retcode = accept(sockfd, addr, addrlen)) < 0)
     {

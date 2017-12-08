@@ -34,6 +34,8 @@ bool end_of_buffer(char* buf, int buflen)
  */
 bool parse_header(char* buf, int buflen, struct HTTP_request* request)
 {
+    printf("Parsing header.\n");
+
     if (!end_of_buffer(buf, buflen))
         return false;
 
