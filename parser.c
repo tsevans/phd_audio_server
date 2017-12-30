@@ -37,7 +37,10 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
     printf("Parsing header.\n");
 
     if (!end_of_buffer(buf, buflen))
+    {
+        printf("End of buffer, returning false.\n");
         return false;
+    }
 
     char tmp[BUFLEN];
     char* str = buf;
@@ -52,7 +55,9 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
     }
 
     if (str_len == -1)
+    {
         return false;
+    }
 
     if (str_len > BUFLEN)
         str_len = BUFLEN;
