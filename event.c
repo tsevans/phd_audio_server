@@ -138,6 +138,9 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
  */
 void serve_static_request(struct HTTP_socket* sock, struct HTTP_request* request)
 {
+    
+    printf("serving a static request\n");
+    
     char filename[BUFLEN];
     char filetype[BUFLEN];
 
