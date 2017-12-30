@@ -39,13 +39,18 @@ void* read_from_socket(void* data)
     memset(callback, '\0', BUFLEN);
     struct HTTP_request request = {method, uri, version, callback};
 
+    printf("Parsing header from event.c\n");
+    
     if (parse_header(sock->read_buf, sock->read_buf_size, &request))
     {
         sock->keep_alive = request.keep_alive;
         handle_request(sock, &request);
     }
     else
+    {
+        printf("Parse header check from event.c returned false, checking for read\n");
         check_read(sock);
+    }
 
     return NULL;
 }
