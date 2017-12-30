@@ -107,9 +107,9 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
 {
     sock->keep_alive = (strcasecmp(request->version, "HTTP/1.0") == 0);
 
-    if (strcasecmp(request->method, "GET") == 0)
+    if (!strcasecmp(request->method, "GET"))
     {
-        if (strstr(request->uri, "cgi-bin") == 0)
+        if (!strstr(request->uri, "cgi-bin"))
             serve_static_request(sock, request);
     }
     else
