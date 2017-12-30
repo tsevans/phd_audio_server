@@ -80,6 +80,8 @@ void* poll_connections(void* data)
  */
 int check_read(struct HTTP_socket* sock)
 {
+    printf("Check read from server.c\n");
+    
     sock->event.events = EPOLLIN | EPOLLRDHUP | EPOLLONESHOT;
     return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sock->fd, &sock->event);
 }
