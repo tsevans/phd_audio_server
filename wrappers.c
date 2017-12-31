@@ -45,6 +45,37 @@ void abort_thread(void* retval)
 }
 
 /*
+ * Initialize and destroy attributes object for a thread.
+ *
+ * @param attrs - Attributes to be initialized.
+ */
+void initialize_attrs(pthread_attr_t* attrs)
+{
+    int retcode;
+    if ((retcode = pthread_attr_init(attrs)) != 0)
+    {
+        fprintf(stderr, "Error initializing pthread attributes, returned code: %s\n", strerror(retcode));
+        exit(0);
+    }
+}
+
+/*
+ * Set/get detachstate attribute for thread attributes object.
+ *
+ * @param attrs - Attributes to be modified.
+ * @param detachstate - Flag for detached or joinable state for thread.
+ */
+void set_attrs_detachstate(pthread_attr_t* attrs, int detachstate)
+{
+    int retcode;
+    if ((retcode = pthread_attr_setdetachstate(attrs, detachstate)) != 0)
+    {
+        fprintf(stderr, "Error setting pthread detach state, returned code: %s\n", strerror(retcode));
+        exit(0);
+    }
+}
+
+/*
  * Create a socket.
  *
  * @param domain - The communication domain.

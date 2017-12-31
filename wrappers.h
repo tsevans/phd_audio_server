@@ -21,6 +21,8 @@
 void create_thread(pthread_t* tid, pthread_attr_t* attr, void* (*routine)(void*), void* arg);
 void join_thread(pthread_t tid, void** ret);
 void abort_thread(void* retval);
+void initialize_attrs(pthread_attr_t* attrs);
+void set_attrs_detachstate(pthread_attr_t* attrs, int detachstate);
 
 //Sockets interface
 int create_socket(int domain, int type, int protocol);

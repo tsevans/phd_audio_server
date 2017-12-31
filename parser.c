@@ -14,11 +14,8 @@ bool end_of_buffer(char* buf, int buflen)
     int x;
     for (x = 0; x < buflen - 3; x++)
     {
-        if (buf[x] == '\r')
-        {
-            if (buf[x+1] == '\n' && buf[x+2] == '\n' && buf[x+3] == '\n')
-                return true;
-        }
+        if (buf[x] == '\r' && buf[x+1] == '\n' && buf[x+2] == '\r' && buf[x+3] == '\n')
+	    return true;
     }
 
     return false;
@@ -34,11 +31,9 @@ bool end_of_buffer(char* buf, int buflen)
  */
 bool parse_header(char* buf, int buflen, struct HTTP_request* request)
 {
-    printf("Parsing header.\n");
-
     if (!end_of_buffer(buf, buflen))
     {
-        printf("End of buffer, returning false.\n");
+        printf("Parser hit end of buffer.\n");
         return false;
     }
 
@@ -65,8 +60,7 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
     strncpy(tmp, str, str_len);
     sscanf(tmp, "%s %s %s\n", request->method, request->uri, request->version);
     parse_uri_callback(request);
-    
-    printf("done parsing, returning true.\n");
+
     return true;
 }
 
@@ -77,8 +71,6 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
  */
 void parse_uri_callback(struct HTTP_request* request)
 {
-    printf("Starting to parse URI callback.\n");
-    
     request->callback[0] = '\0';
     int x;
     for (x = 0; request->uri[x] != '\0' && x < BUFLEN; x++)
@@ -104,7 +96,6 @@ void parse_uri_callback(struct HTTP_request* request)
                 if (!(isalnum(request->uri[x]) || request->uri[x] == '_' || request->uri[x] == '.'))
                 {
                     request->callback[y] = '\0';
-                    printf("Done parsing URI callback.\n");
                     return;
                 }
                 request->callback[y] = request->uri[x];

@@ -14,8 +14,6 @@ static char* storage_path = "/mnt/pidrive1/";
  */
 void* read_from_socket(void* data)
 {
-    printf("Reading from socket...\n");
-
     struct HTTP_socket* sock = (struct HTTP_socket*) data;
     int count = 0;
     char temp[BUFLEN];
@@ -39,8 +37,6 @@ void* read_from_socket(void* data)
     memset(callback, '\0', BUFLEN);
     struct HTTP_request request = {method, uri, version, callback};
 
-    printf("Parsing header from event.c\n");
-    
     if (parse_header(sock->read_buf, sock->read_buf_size, &request))
     {
         sock->keep_alive = request.keep_alive;
@@ -48,7 +44,6 @@ void* read_from_socket(void* data)
     }
     else
     {
-        printf("Parse header check from event.c returned false, checking for read\n");
         check_read(sock);
     }
 
@@ -114,8 +109,16 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
 
     if (!strcasecmp(request->method, "GET"))
     {
-        if (!strstr(request->uri, "cgi-bin"))
+        if (!strcmp(request->uri, "/runloop"))
+        {
+            serve_runloop();
+            write_buffer(&sock->data, "Running loop...\n");
+            serve_text(sock, 0);
+        }
+        else if (!strstr(request->uri, "cgi-bin"))
+        {
             serve_static_request(sock, request);
+        }
     }
     else
     {
@@ -125,15 +128,37 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
     }
 }
 
-// /*
-//  * Change to root path for the server.
-//  *
-//  * @param path - New path for the server.
-//  */
-// void change_root_path(char* path)
-// {
-//     storage_path = path;
-// }
+/*
+ * Synthetic load request to run thread in parallel that loops for
+ * 10 seconds, temporarily increasing load average of server threads.
+ */
+void serve_runloop()
+{
+    pthread_attr_t attrs;
+    initialize_attrs(&attrs);
+    set_attrs_detachstate(&attrs, PTHREAD_CREATE_DETACHED);
+    pthread_t thread;
+    create_thread(&thread, &attrs, &runloop, NULL);
+}
+
+/*
+ * Thread routine to let thread 'spin' for 10 seconds.
+ *
+ * @param data - NULL, no arguments for routine.
+ * @return - Exit status of thread.
+ */
+void* runloop(void* data)
+{
+    printf("Starting loop...\n");
+    time_t start_time = time(NULL);
+    time_t curr_time = time(NULL);
+
+    while ((start_time + 10) >= curr_time)
+        curr_time = time(NULL);
+
+    printf("... Loop finished.\n");
+    return NULL;
+}
 
 /*
  * Method to serve a request for static content.
