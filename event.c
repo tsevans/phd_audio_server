@@ -112,7 +112,7 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
         if (!strcmp(request->uri, "/runloop"))
         {
             serve_runloop();
-            write_buffer(&sock->data, "Running loop...\n");
+            write_buffer(&sock->data, "Spinning new thread on server for 10 seconds.\n");
             serve_text(sock, 0);
         }
         else if (!strstr(request->uri, "cgi-bin"))
