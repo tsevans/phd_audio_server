@@ -56,9 +56,8 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
 
     strncpy(tmp, str, str_len);
     sscanf(tmp, "%s %s %s\n", request->method, request->uri, request->version);
-    printf("URI before: %s\n", request->uri);
     parse_uri_callback(request);
-    printf("URI after: %s\n", request->uri);
+
     return true;
 }
 
@@ -70,6 +69,8 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
 void parse_uri_callback(struct HTTP_request* request)
 {
     request->callback[0] = '\0';
+
+    //Find query string, denoted by '?' in uri
     int x;
     for (x = 0; request->uri[x] != '\0' && x < BUFLEN; x++)
     {
