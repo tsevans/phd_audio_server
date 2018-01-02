@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
         struct HTTP_socket* new_sock = calloc(1, sizeof(struct HTTP_socket));
         new_sock->fd = connection;
-        new_sock->last_access = 0; //time(NULL);
+        new_sock->last_access = time(NULL);
         new_sock->event.events = EPOLLIN | EPOLLRDHUP | EPOLLONESHOT;
         new_sock->event.data.ptr = new_sock;
 

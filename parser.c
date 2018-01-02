@@ -32,10 +32,7 @@ bool end_of_buffer(char* buf, int buflen)
 bool parse_header(char* buf, int buflen, struct HTTP_request* request)
 {
     if (!end_of_buffer(buf, buflen))
-    {
-        printf("Parser hit end of buffer.\n");
         return false;
-    }
 
     char tmp[BUFLEN];
     char* str = buf;
@@ -59,8 +56,9 @@ bool parse_header(char* buf, int buflen, struct HTTP_request* request)
 
     strncpy(tmp, str, str_len);
     sscanf(tmp, "%s %s %s\n", request->method, request->uri, request->version);
+    printf("URI before: %s\n", request->uri);
     parse_uri_callback(request);
-
+    printf("URI after: %s\n", request->uri);
     return true;
 }
 
