@@ -129,6 +129,38 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
 }
 
 /*
+ * Serves request to system info for load average regarding CPU
+ * usage, I/O, and additional data used by uptime and other commands.
+ *
+ * @param buf - Buffer to write system info to.
+ */
+void serve_loadavg(struct buffer* buf)
+{
+    FILE* file;
+    if ((file = fopen("/proc/loadavg", "r")) == NULL)
+    {
+        fprintf(stderr, "Error opening file %s for reading!: %s\n", "/proc/loadavg", strerror(errno));
+        exit(0);
+    }
+
+    while (!feof(file) && !ferror(file))
+    {
+        size_t size = 0;
+        char* line = 0;
+
+        if (getline(&line, &size, file) > 0)
+        {
+            int total_threads, running_threads, pid;
+            float n1, n2, n3;
+            sscanf(line, "%f %f %f %d %d %d\n", &n1, &n2, &n3, &running_threads, &total_threads, &pid);
+            write_buffer(buf, "Total threads: %d\nRunning threads: %d\nLoad average: [%.2f, %.2f, %.2f]\n", total_threads, running_threads, n1, n2, n3);
+        }
+    }
+
+    fclose(file);
+}
+
+/*
  * Synthetic load request to run thread in parallel that loops for
  * 10 seconds, temporarily increasing load average of server threads.
  */
