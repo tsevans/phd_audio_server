@@ -109,7 +109,28 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
 
     if (!strcasecmp(request->method, "GET"))
     {
-        if (!strcmp(request->uri, "/runloop"))
+        if (!strcmp(request->uri, "/loadavg"))
+        {
+            //Wrap callback if needed
+            if (request->callback[0] == '\0')
+            {
+                serve_loadavg(&sock->data);
+            }
+            else
+            {
+                write_buffer(&sock->data, "%s(", request->callback);
+                serve_loadavg(&sock->data);
+                write_buffer(&sock->data, ")");
+            }
+
+            write_buffer(&sock->write_buf, "HTTP/1.1 200 OK\r\n");
+            write_buffer(&sock->write_buf, "Server: PHD Audio Server\r\n");
+            write_buffer(&sock->write_buf, "Content-length %d\r\n", sock->data.pos);
+            write_buffer(&sock->write_buf, "Content-type: application/json\r\n");
+            write_buffer(&sock->write_buf, "\r\n");
+            finish_read(sock);
+        }
+        else if (!strcmp(request->uri, "/runloop"))
         {
             serve_runloop();
             write_buffer(&sock->data, "Spinning new thread on server for 10 seconds.\n");
@@ -153,7 +174,9 @@ void serve_loadavg(struct buffer* buf)
             int total_threads, running_threads, pid;
             float n1, n2, n3;
             sscanf(line, "%f %f %f %d %d %d\n", &n1, &n2, &n3, &running_threads, &total_threads, &pid);
-            write_buffer(buf, "Total threads: %d\nRunning threads: %d\nLoad average: [%.2f, %.2f, %.2f]\n", total_threads, running_threads, n1, n2, n3);
+            write_buffer(buf,
+                         "{\"total_threads\": \"%d\", \"loadavg\": [\"%.2f\", \"%.2f\", \"%.2f\"], \"running_threads\": \"%d\"}",
+                         total_threads, n1, n2, n3, running_threads);
         }
     }
 
