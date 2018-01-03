@@ -175,7 +175,7 @@ void serve_loadavg(struct buffer* buf)
             float n1, n2, n3;
             sscanf(line, "%f %f %f %d %d %d\n", &n1, &n2, &n3, &running_threads, &total_threads, &pid);
             write_buffer(buf,
-                         "{\n\t\"total_threads\": \"%d\",\n\t \"loadavg\": [\"%.2f\", \"%.2f\", \"%.2f\"],\n\t \"running_threads\": \"%d\"\n}",
+                         "{\n\t\"total_threads\": \"%d\",\n\t\"loadavg\": [\"%.2f\", \"%.2f\", \"%.2f\"],\n\t\"running_threads\": \"%d\"\n}\n",
                          total_threads, n1, n2, n3, running_threads);
         }
     }
