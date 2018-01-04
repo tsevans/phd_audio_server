@@ -170,6 +170,7 @@ void serve_loadavg(struct buffer* buf)
 
         if (getline(&line, &size, file) > 0)
         {
+            printf("Line: %s\n", line);
             int total_threads, running_threads, pid;
             float n1, n2, n3;
             sscanf(line, "%f %f %f %d %d %d\n", &n1, &n2, &n3, &running_threads, &total_threads, &pid);
