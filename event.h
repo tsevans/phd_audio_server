@@ -24,8 +24,6 @@ void change_root_path(char* path);
 int load_file(struct HTTP_socket* sock, char* fname);
 void write_buffer(struct buffer* buf, char* str, ...);
 void serve_loadavg(struct buffer* buf);
-void serve_runloop();
-void* runloop(void* data);
 void serve_static_request(struct HTTP_socket* sock, struct HTTP_request* request);
 void serve_text(struct HTTP_socket* sock, int err);
 void finish_read(struct HTTP_socket* sock);

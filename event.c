@@ -1,4 +1,5 @@
 #include "event.h"
+#include "requests.h"
 
 #define BUFLEN 8192
 #define REALLOC_SIZE 2048
@@ -132,9 +133,7 @@ void handle_request(struct HTTP_socket* sock, struct HTTP_request* request)
         }
         else if (!strcmp(request->uri, "/runloop"))
         {
-            serve_runloop();
-            write_buffer(&sock->data, "Spinning new thread on server for 10 seconds.\n");
-            serve_text(sock, 0);
+            serve_runloop(sock);
         }
         else if (!strstr(request->uri, "cgi-bin"))
         {
@@ -184,38 +183,6 @@ void serve_loadavg(struct buffer* buf)
 }
 
 /*
- * Synthetic load request to run thread in parallel that loops for
- * 10 seconds, temporarily increasing load average of server threads.
- */
-void serve_runloop()
-{
-    pthread_attr_t attrs;
-    initialize_attrs(&attrs);
-    set_attrs_detachstate(&attrs, PTHREAD_CREATE_DETACHED);
-    pthread_t thread;
-    create_thread(&thread, &attrs, &runloop, NULL);
-}
-
-/*
- * Thread routine to let thread 'spin' for 10 seconds.
- *
- * @param data - NULL, no arguments for routine.
- * @return - Exit status of thread.
- */
-void* runloop(void* data)
-{
-    printf("Starting loop...\n");
-    time_t start_time = time(NULL);
-    time_t curr_time = time(NULL);
-
-    while ((start_time + 10) >= curr_time)
-        curr_time = time(NULL);
-
-    printf("... Loop finished.\n");
-    return NULL;
-}
-
-/*
  * Method to serve a request for static content.
  *
  * @param sock - Socket that request was read from.
@@ -253,12 +220,16 @@ void serve_static_request(struct HTTP_socket* sock, struct HTTP_request* request
         return;
     }
 
-    if (strstr(filename, ".html"))
+    //Check type of file
+    if (strstr(filename, ".html")) {
         strcpy(filetype, "text/html");
-    else if (strstr(filename, ".mp3"))
+    }
+    else if (strstr(filename, ".mp3")) {
         strcpy(filetype, "audio/mpeg");
-    else
+    }
+    else {
         strcpy(filetype, "text/plain");
+    }
 
     load_file(sock, filename);
     write_buffer(&sock->write_buf, "HTTP/1.1 200 OK\r\n");
