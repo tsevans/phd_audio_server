@@ -10,7 +10,7 @@ When this URL is visited, a POSIX thread is started and run in parallel for a gi
 #### /loadavg
 When this URL is visited, the server provides the system's load average which is reported by the kernel to loadavg of the /proc file system.
 
-## Raspberry Pi
+## Personal Notes for Raspberry Pi
 Temporary USB storage location:
 ```
 /mnt/pidrive1/
